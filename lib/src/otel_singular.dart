@@ -2,7 +2,6 @@
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
 import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
-import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_singular_suppression.dart';
 
@@ -80,93 +79,130 @@ Future<T> tracedSingular<T>({
   final t = tracer ?? OTel.tracerProvider().getTracer('otel_singular');
   final span = t.startSpan('singular $operation', kind: SpanKind.client);
   try {
-    span.setStringAttribute('rpc.system', 'singular');
-    span.setStringAttribute('rpc.method', operation);
+    span.addAttributes(
+        OTel.attributes([OTel.attributeString('rpc.system', 'singular')]));
+    span.addAttributes(
+        OTel.attributes([OTel.attributeString('rpc.method', operation)]));
     final r = await invoke();
     final res = r.result;
     if (res != null) {
       if (res.account != null) {
-        span.setStringAttribute('singular.account', res.account!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('singular.account', res.account!)]));
       }
       if (res.app != null) {
-        span.setStringAttribute('singular.app', res.app!);
+        span.addAttributes(
+            OTel.attributes([OTel.attributeString('singular.app', res.app!)]));
       }
       if (res.platform != null) {
-        span.setStringAttribute('singular.platform', res.platform!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('singular.platform', res.platform!)]));
       }
       if (res.sdkVersion != null) {
-        span.setStringAttribute('singular.sdk_version', res.sdkVersion!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('singular.sdk_version', res.sdkVersion!)]));
       }
       if (res.eventName != null) {
-        span.setStringAttribute('singular.event.name', res.eventName!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('singular.event.name', res.eventName!)]));
       }
       if (res.eventType != null) {
-        span.setStringAttribute('singular.event.type', res.eventType!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('singular.event.type', res.eventType!)]));
       }
       if (res.installId != null) {
-        span.setStringAttribute('singular.install.id', res.installId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('singular.install.id', res.installId!)]));
       }
       if (res.deviceId != null) {
-        span.setStringAttribute('singular.device.id', res.deviceId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('singular.device.id', res.deviceId!)]));
       }
       if (res.userId != null) {
-        span.setStringAttribute('singular.user.id', res.userId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('singular.user.id', res.userId!)]));
       }
       if (res.network != null) {
-        span.setStringAttribute('singular.attribution.network', res.network!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString('singular.attribution.network', res.network!)
+        ]));
       }
       if (res.campaign != null) {
-        span.setStringAttribute('singular.attribution.campaign', res.campaign!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString('singular.attribution.campaign', res.campaign!)
+        ]));
       }
       if (res.campaignId != null) {
-        span.setStringAttribute(
-            'singular.attribution.campaign_id', res.campaignId!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString(
+              'singular.attribution.campaign_id', res.campaignId!)
+        ]));
       }
       if (res.adset != null) {
-        span.setStringAttribute('singular.attribution.adset', res.adset!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('singular.attribution.adset', res.adset!)]));
       }
       if (res.creative != null) {
-        span.setStringAttribute('singular.attribution.creative', res.creative!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString('singular.attribution.creative', res.creative!)
+        ]));
       }
       if (res.subPublisher != null) {
-        span.setStringAttribute(
-            'singular.attribution.sub_publisher', res.subPublisher!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString(
+              'singular.attribution.sub_publisher', res.subPublisher!)
+        ]));
       }
       if (res.country != null) {
-        span.setStringAttribute('singular.country', res.country!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('singular.country', res.country!)]));
       }
       if (res.conversionType != null) {
-        span.setStringAttribute(
-            'singular.conversion.type', res.conversionType!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString('singular.conversion.type', res.conversionType!)
+        ]));
       }
       if (res.conversionValue != null) {
-        span.setDoubleAttribute(
-            'singular.conversion.value', res.conversionValue!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeDouble(
+              'singular.conversion.value', res.conversionValue!)
+        ]));
       }
       if (res.revenueAmount != null) {
-        span.setDoubleAttribute('singular.revenue.amount', res.revenueAmount!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeDouble('singular.revenue.amount', res.revenueAmount!)
+        ]));
       }
       if (res.revenueCurrency != null) {
-        span.setStringAttribute(
-            'singular.revenue.currency', res.revenueCurrency!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString(
+              'singular.revenue.currency', res.revenueCurrency!)
+        ]));
       }
       if (res.isReengagement != null) {
-        span.setBoolAttribute('singular.is_reengagement', res.isReengagement!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeBool('singular.is_reengagement', res.isReengagement!)
+        ]));
       }
       if (res.isReinstall != null) {
-        span.setBoolAttribute('singular.is_reinstall', res.isReinstall!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeBool('singular.is_reinstall', res.isReinstall!)]));
       }
       if (res.statusCode != null) {
-        span.setIntAttribute('http.response.status_code', res.statusCode!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeInt('http.response.status_code', res.statusCode!)]));
       }
       if (res.errorCode != null) {
-        span.setStringAttribute('singular.error.code', res.errorCode!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('singular.error.code', res.errorCode!)]));
       }
       final fail = res.errorCode != null ||
           (res.statusCode != null && res.statusCode! >= 400);
       if (fail) {
-        span.setStringAttribute(
-            ErrorResource.errorType.key, res.errorCode ?? 'singular.error');
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString(
+              ErrorResource.errorType.key, res.errorCode ?? 'singular.error')
+        ]));
         span.setStatus(SpanStatusCode.Error, res.errorMessage);
       }
     }
