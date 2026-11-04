@@ -1,11 +1,12 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the Apache License, Version 2.0
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_singular_suppression.dart';
 
 class SingularResult {
+  /// Creates a result.
   const SingularResult({
     this.account,
     this.app,
@@ -61,8 +62,13 @@ class SingularResult {
   final String? errorMessage;
 }
 
+/// What a traced call returned: the value for the caller plus fields
+/// recorded on the span.
 class SingularCallResult<T> {
+  /// Creates a call result.
   const SingularCallResult({required this.value, this.result});
+
+  /// The value returned to the caller.
   final T value;
   final SingularResult? result;
 }
@@ -70,138 +76,145 @@ class SingularCallResult<T> {
 Future<T> tracedSingular<T>({
   required String operation,
   required Future<SingularCallResult<T>> Function() invoke,
-  Tracer? tracer,
+  APITracer? tracer,
 }) async {
   if (singularInstrumentationSuppressed()) {
     final r = await invoke();
     return r.value;
   }
-  final t = tracer ?? OTel.tracerProvider().getTracer('otel_singular');
+  final t = tracer ?? OTelAPI.tracerProvider().getTracer('otel_singular');
   final span = t.startSpan('singular $operation', kind: SpanKind.client);
   try {
+    span.addAttributes(OTelAPI.attributes(
+        [OTelAPI.attributeString('rpc.system', 'singular')]));
     span.addAttributes(
-        OTel.attributes([OTel.attributeString('rpc.system', 'singular')]));
-    span.addAttributes(
-        OTel.attributes([OTel.attributeString('rpc.method', operation)]));
+        OTelAPI.attributes([OTelAPI.attributeString('rpc.method', operation)]));
     final r = await invoke();
     final res = r.result;
     if (res != null) {
       if (res.account != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('singular.account', res.account!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('singular.account', res.account!)]));
       }
       if (res.app != null) {
-        span.addAttributes(
-            OTel.attributes([OTel.attributeString('singular.app', res.app!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('singular.app', res.app!)]));
       }
       if (res.platform != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('singular.platform', res.platform!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('singular.platform', res.platform!)]));
       }
       if (res.sdkVersion != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('singular.sdk_version', res.sdkVersion!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('singular.sdk_version', res.sdkVersion!)
+        ]));
       }
       if (res.eventName != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('singular.event.name', res.eventName!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('singular.event.name', res.eventName!)]));
       }
       if (res.eventType != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('singular.event.type', res.eventType!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('singular.event.type', res.eventType!)]));
       }
       if (res.installId != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('singular.install.id', res.installId!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('singular.install.id', res.installId!)]));
       }
       if (res.deviceId != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('singular.device.id', res.deviceId!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('singular.device.id', res.deviceId!)]));
       }
       if (res.userId != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('singular.user.id', res.userId!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('singular.user.id', res.userId!)]));
       }
       if (res.network != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString('singular.attribution.network', res.network!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('singular.attribution.network', res.network!)
         ]));
       }
       if (res.campaign != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString('singular.attribution.campaign', res.campaign!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString(
+              'singular.attribution.campaign', res.campaign!)
         ]));
       }
       if (res.campaignId != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString(
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString(
               'singular.attribution.campaign_id', res.campaignId!)
         ]));
       }
       if (res.adset != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('singular.attribution.adset', res.adset!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('singular.attribution.adset', res.adset!)
+        ]));
       }
       if (res.creative != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString('singular.attribution.creative', res.creative!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString(
+              'singular.attribution.creative', res.creative!)
         ]));
       }
       if (res.subPublisher != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString(
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString(
               'singular.attribution.sub_publisher', res.subPublisher!)
         ]));
       }
       if (res.country != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('singular.country', res.country!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('singular.country', res.country!)]));
       }
       if (res.conversionType != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString('singular.conversion.type', res.conversionType!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString(
+              'singular.conversion.type', res.conversionType!)
         ]));
       }
       if (res.conversionValue != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeDouble(
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeDouble(
               'singular.conversion.value', res.conversionValue!)
         ]));
       }
       if (res.revenueAmount != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeDouble('singular.revenue.amount', res.revenueAmount!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeDouble('singular.revenue.amount', res.revenueAmount!)
         ]));
       }
       if (res.revenueCurrency != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString(
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString(
               'singular.revenue.currency', res.revenueCurrency!)
         ]));
       }
       if (res.isReengagement != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeBool('singular.is_reengagement', res.isReengagement!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeBool('singular.is_reengagement', res.isReengagement!)
         ]));
       }
       if (res.isReinstall != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeBool('singular.is_reinstall', res.isReinstall!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeBool('singular.is_reinstall', res.isReinstall!)
+        ]));
       }
       if (res.statusCode != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeInt('http.response.status_code', res.statusCode!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeInt('http.response.status_code', res.statusCode!)
+        ]));
       }
       if (res.errorCode != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('singular.error.code', res.errorCode!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('singular.error.code', res.errorCode!)]));
       }
       final fail = res.errorCode != null ||
           (res.statusCode != null && res.statusCode! >= 400);
       if (fail) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString(
-              ErrorResource.errorType.key, res.errorCode ?? 'singular.error')
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString(
+              ErrorAttributes.errorType.key, res.errorCode ?? 'singular.error')
         ]));
         span.setStatus(SpanStatusCode.Error, res.errorMessage);
       }
